@@ -1,51 +1,38 @@
-package com.codepath.campgrounds
-
 import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.codepath.campgrounds.Campground
+import com.codepath.campgrounds.R
 
+// com/codepath/campgrounds/CampgroundAdapter.kt
+class CampgroundAdapter(
+    private val context: Context,
+    private val items: List<Campground>
+) : RecyclerView.Adapter<CampgroundAdapter.ViewHolder>() {
 
-private const val TAG = "CampgroundAdapter"
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val name: TextView = itemView.findViewById(R.id.campgroundName)
+        private val desc: TextView = itemView.findViewById(R.id.campgroundDescription)
+        private val sleep: TextView = itemView.findViewById(R.id.Sleep)
 
-class CampgroundAdapter(private val context: Context, private val campgrounds: List<Campground>) :
-    RecyclerView.Adapter<CampgroundAdapter.ViewHolder>() {
+        fun bind(item: Campground) {
+            name.text = item.name ?: ""
+            desc.text = item.description ?: ""
+            sleep.text = item.sleep ?: ""
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.item_campground, parent, false)
-        return ViewHolder(view)
+        val v = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_campground, parent, false)
+        return ViewHolder(v)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val campground = campgrounds[position]
-        holder.bind(campground)
-    }
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) =
+        holder.bind(items[position])
 
-    override fun getItemCount() = campgrounds.size
-
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
-        View.OnClickListener {
-
-        private val nameTextView = itemView.findViewById<TextView>(R.id.campgroundName)
-        private val descriptionTextView = itemView.findViewById<TextView>(R.id.campgroundDescription)
-
-        init {
-            itemView.setOnClickListener(this)
-        }
-
-        fun bind(campground: Campground) {
-            nameTextView.text = campground.name
-            descriptionTextView.text = campground.description
-        }
-
-        override fun onClick(v: View?) {
-            val campground = campgrounds[absoluteAdapterPosition]
-            val intent = Intent(context, DetailActivity::class.java)
-            intent.putExtra(CAMPGROUND_EXTRA, campground)
-            context.startActivity(intent)
-        }
-    }
+    override fun getItemCount() = items.size
 }

@@ -19,11 +19,9 @@ data class Campground(
     val name: String?,
     @SerialName("description")
     val description: String?,
-) : java.io.Serializable
+    @SerialName("sleep")
+    val sleep: String?,
 
-@Keep
-@Serializable
-data class CampgroundImage(
-    @SerialName("url") val url: String?,
-    @SerialName("title") val title: String?
-) : java.io.Serializable
+): java.io.Serializable
+
+

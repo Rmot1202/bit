@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- res/layout/item_campground.xml (ROW ITEM, not the dialog) -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="12dp"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:orientation="vertical" android:padding="12dp"
+    android:layout_width="match_parent" android:layout_height="wrap_content">
 
-    <!-- MUST match adapter IDs -->
     <TextView
         android:id="@+id/campgroundName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:textSize="16sp" />
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:textStyle="bold" android:textSize="16sp" />
 
     <TextView
         android:id="@+id/campgroundDescription"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:textSize="14sp" />
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="6dp" android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/Sleep"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="6dp" android:textSize="14sp" />
 </LinearLayout>
+
+

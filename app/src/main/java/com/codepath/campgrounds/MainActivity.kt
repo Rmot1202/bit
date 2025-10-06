@@ -1,18 +1,18 @@
 package com.codepath.campgrounds
 
 import android.os.Bundle
-import android.util.Log
+import android.view.LayoutInflater
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.codepath.campgrounds.databinding.ActivityMainBinding
-import com.codepath.asynchttpclient.AsyncHttpClient
-import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler
-import kotlinx.serialization.json.Json
-import okhttp3.Headers
-import org.json.JSONException
 
+// Keep your existing helper if other files use it
+// (No network usage now, but leaving it won't hurt)
+import kotlinx.serialization.json.Json
 fun createJson() = Json {
     isLenient = true
     ignoreUnknownKeys = true
@@ -20,64 +20,70 @@ fun createJson() = Json {
 }
 
 private const val TAG = "CampgroundsMain/"
-private val PARKS_API_KEY = BuildConfig.API_KEY
-private val CAMPGROUNDS_URL =
-    "https://developer.nps.gov/api/v1/campgrounds?api_key=${PARKS_API_KEY}"
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var campgroundsRecyclerView: RecyclerView
     private lateinit var binding: ActivityMainBinding
-    private val campgrounds = mutableListOf<Campground>()
+    private val campgrounds = mutableListOf<Campground>() // <- keep same variable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
+        setContentView(binding.root)
 
         campgroundsRecyclerView = findViewById(R.id.campgrounds)
         val campgroundAdapter = CampgroundAdapter(this, campgrounds)
         campgroundsRecyclerView.adapter = campgroundAdapter
 
-        // TODO: Step 7: Load new items from our database
-
-
+        // Layout + divider
         campgroundsRecyclerView.layoutManager = LinearLayoutManager(this).also {
-            val dividerItemDecoration = DividerItemDecoration(this, it.orientation)
-            campgroundsRecyclerView.addItemDecoration(dividerItemDecoration)
+            val divider = DividerItemDecoration(this, it.orientation)
+            campgroundsRecyclerView.addItemDecoration(divider)
         }
 
-        val client = AsyncHttpClient()
-        client.get(CAMPGROUNDS_URL, object : JsonHttpResponseHandler() {
-            override fun onFailure(
-                statusCode: Int,
-                headers: Headers?,
-                response: String?,
-                throwable: Throwable?
-            ) {
-                Log.e(TAG, "Failed to fetch campgrounds: $statusCode")
+        // NEW: Add button to insert user-entered items (no API)
+        binding.fabAdd.setOnClickListener {
+            showAddCampgroundDialog { newCg ->
+                // Update list (top)
+                campgrounds.add(0, newCg)
+                campgroundAdapter.notifyItemInserted(0)
+                campgroundsRecyclerView.scrollToPosition(0)
             }
+        }
 
-            override fun onSuccess(statusCode: Int, headers: Headers, json: JSON) {
-                Log.i(TAG, "Successfully fetched campgrounds: $json")
-                try {
-                    val parsedJson = createJson().decodeFromString(
-                        CampgroundResponse.serializer(),
-                        json.jsonObject.toString()
-                    )
+        // (Optional) Seed with one example if you want to see the UI quickly
+        // campgrounds.add(Campground(name="Sample Site", description="User-added", imageUrl=null))
+        // campgroundAdapter.notifyItemInserted(0)
+    }
 
-                    parsedJson.data?.let { list ->
-                        campgrounds.addAll(list)
+    private fun showAddCampgroundDialog(onAdd: (Campground) -> Unit) {
+        val dialogView = LayoutInflater.from(this)
+            .inflate(R.layout.item_campground, null, false)
 
-                        campgroundAdapter.notifyDataSetChanged()
-                    }
+        val etName = dialogView.findViewById<EditText>(R.id.etName)
+        val etDesc = dialogView.findViewById<EditText>(R.id.etDescription)
 
-                } catch (e: JSONException) {
-                    Log.e(TAG, "Exception: $e")
-                }
+
+        AlertDialog.Builder(this)
+            .setTitle("Add Campground")
+            .setView(dialogView)
+            .setPositiveButton("Add") { d, _ ->
+                val name = etName.text.toString().trim().ifEmpty { "Untitled" }
+                val desc = etDesc.text.toString().trim().ifEmpty { "No description" }
+
+                // Map to YOUR existing Campground fields
+                // If your Campground has different property names, set them here.
+                val cg = Campground(
+                    name = name,
+                    description = desc
+                    // add/adjust any other fields your adapter expects (ids, codes, etc.)
+                )
+                onAdd(cg)
+                d.dismiss()
             }
-
-        })
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 }

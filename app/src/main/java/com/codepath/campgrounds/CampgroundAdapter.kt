@@ -5,10 +5,8 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 
 
 private const val TAG = "CampgroundAdapter"
@@ -33,8 +31,6 @@ class CampgroundAdapter(private val context: Context, private val campgrounds: L
 
         private val nameTextView = itemView.findViewById<TextView>(R.id.campgroundName)
         private val descriptionTextView = itemView.findViewById<TextView>(R.id.campgroundDescription)
-        private val locationTextView = itemView.findViewById<TextView>(R.id.campgroundLocation)
-        private val imageView = itemView.findViewById<ImageView>(R.id.campgroundImage)
 
         init {
             itemView.setOnClickListener(this)
@@ -43,11 +39,6 @@ class CampgroundAdapter(private val context: Context, private val campgrounds: L
         fun bind(campground: Campground) {
             nameTextView.text = campground.name
             descriptionTextView.text = campground.description
-            locationTextView.text = campground.latLong
-
-            Glide.with(context)
-                .load(campground.imageUrl)
-                .into(imageView)
         }
 
         override fun onClick(v: View?) {

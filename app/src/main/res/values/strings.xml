@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Campgrounds</string>
+    <string name="add_campground">Add Campground</string>
 </resources>

@@ -1,7 +1,6 @@
 package com.codepath.campgrounds
 
-
-import android.support.annotation.Keep
+import androidx.annotation.Keep
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -20,16 +19,7 @@ data class Campground(
     val name: String?,
     @SerialName("description")
     val description: String?,
-    @SerialName("latLong")
-    val latLong: String?,
-    @SerialName("images")
-    val images: List<CampgroundImage>?
-) : java.io.Serializable {
-    // Convenience property to easily get the first image URL if it exists
-    val imageUrl: String
-        get() = images?.firstOrNull { !it.url.isNullOrEmpty() }?.url ?: ""
-}
-
+) : java.io.Serializable
 
 @Keep
 @Serializable
